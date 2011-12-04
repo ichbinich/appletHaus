@@ -32,7 +32,6 @@ public class HausKalk
 		this.setValue (IO.temperaturInnen, 10);
 		this.setValue (IO.uhrzeit, 12);
 		this.setValue (IO.personen, 3);
-	
 		fis.evaluate();
 	} 
 	/**
@@ -41,7 +40,6 @@ public class HausKalk
 	private void loadFis() throws FisNotLoadedException
 	{
 		fis = FIS.load (dateiname, true);
-		
 		if (fis == null)
 		{ 
 			throw new FisNotLoadedException();
@@ -54,11 +52,10 @@ public class HausKalk
 	{
 		return this.fis.getVariable(io.toString()).chart(false).createBufferedImage(200, 200);
 	}
-	private void setValue (IO io, double i) 
+	public void setValue (IO io, double i) 
 	{
 		fis.setVariable (io.toString(), i);
 	}
-	
 	/**
 	 * @return gibt den Wert der varuabeln zurueck
 	 */
@@ -66,50 +63,50 @@ public class HausKalk
 	{
 		return fis.getVariable (io.toString()).getValue();
 	}
-	
 	/**
 	 * Berechnung neuer Werte für die Inputvariablen
 	 */
 	@SuppressWarnings("unused")
 	public void calcNewValues(){
 		Random rand = new Random();
-		/* speichere Werte zwischen um nebeneffekte zu vermeiden */
+		/* speichere Werte zwischen um nebeneffekte zu vermeiden 		*/
 		double tmpAussen = this.getValue(IO.temperaturAussen);
 		double tmpLicht = this.getValue(IO.lichtStaerke);
 		double tmpUhrzeit = this.getValue(IO.uhrzeit); 
 		double tmpPersonen = this.getValue(IO.personen);
 		double tmpInnen = this.getValue(IO.temperaturInnen);
-	
-		/* Berechnungn einer neuen Uhrzeit. 						*/
+		/* Berechnungn einer neuen Uhrzeit. 							*/
 		this.setValue(IO.uhrzeit, (tmpUhrzeit++) % 24);
-		/* Berechnung der neuen Innentemperatur 					*/
-		
-		/* Berechnung der Lichtstaerke 								*/
-		/* If Tag													*/
-		if(this.getValue(IO.uhrzeit) > 6 && this.getValue(IO.uhrzeit) <= 18){
+		/* Berechnung der neuen Innentemperatur 						*/
+		if(true) /* TODO: WEGMACHEN */ 				
+		{
+			/* Berechnung der Lichtstaerke 								*/
+			/* If Tag													*/
+			if(this.getValue(IO.uhrzeit) > 6 && this.getValue(IO.uhrzeit) <= 18){
+				
+			}
+			/* If Dämmerung  											*/	
+			if(this.getValue(IO.uhrzeit) < 4 && this.getValue(IO.uhrzeit) > 22){
 			
+			}
+			/* If Nachts 												*/
+			if((this.getValue(IO.uhrzeit) >= 4 && this.getValue(IO.uhrzeit) <= 6) ||
+			(this.getValue(IO.uhrzeit) >= 18 && this.getValue(IO.uhrzeit) <= 22))
+			{
+			}
+			/* Berechnung der Anzahl der Personen 						*/
+			double pers = rand.nextInt(5);
+			if (0 == rand.nextInt (100) % 2)
+				tmpPersonen += pers;
+			tmpPersonen -= pers;
+			if(tmpPersonen < 0)
+				tmpPersonen *= -1;
+			this.setValue(IO.personen, tmpPersonen);
+			/** Berechnung der Innentemperatur 					TODO: Temperaturberechnung		*/
+				// c * Heizung * 1 /  Lüftung * Rolladen_Licht * Aussentemperatur * Innentemperaturvorher * Leute
+			/* Berechnung der Aussentemperatur
+			 * // tmpAussentemperatur + Licht * c + uhrzeit	
+			 */ 			
 		}
-		/* If Dämmerung  											*/	
-		if(this.getValue(IO.uhrzeit) < 4 && this.getValue(IO.uhrzeit) > 22){
-		
-		}
-		/* If Nachts 												*/
-		if((this.getValue(IO.uhrzeit) >= 4 && this.getValue(IO.uhrzeit) <= 6) ||
-		(this.getValue(IO.uhrzeit) >= 18 && this.getValue(IO.uhrzeit) <= 22)){	
-		
-		}
-		/* Berechnung der Anzahl der Personen 						*/
-		double pers = rand.nextInt(5);
-		if (0 == rand.nextInt (100) % 2)
-			tmpPersonen += pers;
-		tmpPersonen -= pers;
-		if(tmpPersonen < 0)
-			tmpPersonen *= -1;
-		this.setValue(IO.personen, tmpPersonen);
-		/* Berechnung der Innentemperatur 							*/
-			// c * Heizung * 1 /  Lüftung * Rolladen_Licht * Aussentemperatur * Innentemperaturvorher * Leute
-		/* Berechnung der Aussentemperatur
-		 * // tmpAussentemperatur + Licht * c + uhrzeit	
-		 */ 							
 	}
 }
