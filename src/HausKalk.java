@@ -18,7 +18,7 @@ import net.sourceforge.jFuzzyLogic.*;
 public class HausKalk 
 {
 	private final double WIRKGRAD_HZG = 0.1;
-	private final dpuble WIRKGRAD_HZG = 0.1;
+	private final double WIRKGRAD_DAEMM = 0.1;
 	public static enum IO { uhrzeit, lichtStaerke, temperaturAussen, temperaturInnen, personen, heizung, lueftung, rolladen }
 	String dateiname;
 	FIS fis;
@@ -104,11 +104,11 @@ public class HausKalk
 			tmpPersonen *= -1;
 		this.setValue(IO.personen, tmpPersonen);
 		/** Berechnung der Innentemperatur 					TODO: Temperaturberechnung		*/
-		tmpInnen = tmpInnen + (WIRKGRAD_HZG * tmpHeizung) + (tmpAussen - tmpInnen) * WIRKGRAD_HZG;  
+		tmpInnen = tmpInnen + (WIRKGRAD_HZG * 50) + (tmpAussen - tmpInnen) * WIRKGRAD_DAEMM;  
 		/* Berechnung der Aussentemperatur
 		 *  tmpAussentemperatur + Licht * c + uhrzeit	
 		 */ 	
-		 tmpAussen = tmpAussen 
+		 tmpAussen = tmpAussen +1; 
 		 this.setValue(IO.temperaturAussen,tmpAussen);
 	}
 }

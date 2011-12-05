@@ -7,6 +7,7 @@
 public class HausMain {
 	public static void main(String[] args) throws FisNotLoadedException{
 		HausApplet meinHaus = new HausApplet();	
-		meinHaus.run();
+		meinHaus.init();
+		meinHaus.start();
 	}
 }
