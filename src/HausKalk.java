@@ -18,7 +18,7 @@ import net.sourceforge.jFuzzyLogic.*;
 public class HausKalk 
 {
 	private final double WIRKGRAD_HZG = 0.1;
-	privat final dpuble WIRKGRAD_HZG = 0.1;
+	private final dpuble WIRKGRAD_HZG = 0.1;
 	public static enum IO { uhrzeit, lichtStaerke, temperaturAussen, temperaturInnen, personen, heizung, lueftung, rolladen }
 	String dateiname;
 	FIS fis;
