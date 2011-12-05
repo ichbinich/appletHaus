@@ -1,0 +1,139 @@
+FUNCTION_BLOCK
+
+VAR_INPUT
+    temperaturAussen:	REAL; (* RANGE(-30 .. 50) *)
+    temperaturInnen:	REAL; (* RANGE(5 .. 50) *)
+    uhrzeit:	  		REAL; (* RANGE(0 .. 24) *)
+    lichtStaerke:    	REAL; (* RANGE(0 .. 100000) *)
+    personen:  		REAL; (* RANGE(0 .. 50) *) 
+END_VAR
+
+VAR_OUTPUT
+    heizung:			REAL; (* RANGE(0 .. 100) *) 
+    rolladen:			REAL; (* RANGE(0 .. 100) *) 
+    lueftung:	REAL; (* RANGE(-100 .. 100) *) 
+END_VAR
+
+FUZZIFY temperaturAussen
+    TERM Arschkalt 	:= (-30, 1) (-1, 1) (4, 0) ;
+    TERM Kalt 		:= (0, 0) (7, 1) (11, 1) (15, 0) ;
+    TERM Angenehm 	:= (12, 0) (18, 1) (24, 1) (34, 0) ;
+    TERM Warm 		:= (29, 0) (32, 1) (37, 1) (42, 0) ;
+    TERM Heiss 		:= (38, 0) (43, 1) (50, 1) ;
+END_FUZZIFY
+
+FUZZIFY temperaturInnen
+    TERM Kalt 		:= (5, 1) (8, 1) (14, 0) ;
+    TERM Angenehm 	:= (10, 0) (16, 1) (20, 1) (22, 0) ;
+    TERM Warm 		:= (20, 0) (23, 1) (28, 1) (33, 0) ;
+    TERM Heiss 		:= (30, 0) (36, 1) (50, 1) ;
+END_FUZZIFY
+
+FUZZIFY uhrzeit
+    TERM Nacht		:= (0, 1) (5, 1) (8, 0) ;
+    TERM Morgen		:= (5, 0) (8, 1) (12, 0) ;
+    TERM Mittag 	:= (10, 0) (13, 1) (17, 0) ;
+    TERM Abend 		:= (15, 0) (19, 1) (22, 0) ;
+    TERM Nacht2		:= (20, 0) (22, 1) (24, 0) ;
+END_FUZZIFY
+
+FUZZIFY lichtStaerke
+    TERM SehrDunkel	:= (0, 1) (1, 0) ;
+    TERM Hell 		:= (0, 0) (20000, 1) (30000, 0) ;
+    TERM SehrHell 	:= (20000, 0) (30000, 1) (100000, 1) ;
+END_FUZZIFY
+
+FUZZIFY personen
+    TERM Keine		:= (0, 1) (1, 1) (1, 0) ;
+    TERM Wenig 		:= (1, 0) (1, 1) (5, 1) (10, 0) ;
+    TERM Mittel 	:= (5, 0) (10, 1) (20, 1) (25, 0) ;
+    TERM Viel 		:= (20, 0) (30, 1) (50, 1) ;
+END_FUZZIFY
+
+DEFUZZIFY heizung
+    TERM Aus		:= (0, 1) (1, 1) (1, 0) ;
+    TERM Niedrig	:= (10, 0) (25, 1) (40, 0) ;
+    TERM Mittel 	:= (30, 0) (50, 1) (70, 0) ;
+    TERM Hoch 		:= (60, 0) (100, 1) ;
+END_DEFUZZIFY
+
+DEFUZZIFY rolladen
+    TERM Oben		:= (0, 1) (40, 0) ;
+    TERM Mitte		:= (20, 0) (50, 1) (80, 0) ;
+    TERM Unten	 	:= (60, 0) (100, 1) ;
+END_DEFUZZIFY
+
+DEFUZZIFY lueftung
+    TERM Standby	:= (0, 1) (10, 0) ;
+    TERM Langsam	:= (0, 0) (5, 1) (40, 0) ;
+    TERM Mittel 	:= (20, 0) (50, 1) (80, 0) ;
+    TERM Schnell	:= (60, 0) (100, 1) ;
+END_DEFUZZIFY
+
+RULEBLOCK first
+
+AND:MIN;
+ACCU:MAX;
+
+RULE 0: IF uhrzeit IS Nacht THEN rolladen IS Unten;
+RULE 1: IF uhrzeit IS Nacht2 THEN rolladen IS Unten;
+RULE 2: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Kalt AND personen IS Wenig THEN heizung IS Hoch, lueftung IS Langsam;
+RULE 3: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Kalt AND personen IS Mittel THEN heizung IS Mittel ,lueftung IS Langsam;
+RULE 4: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Kalt AND personen IS Viel THEN heizung IS Niedrig, lueftung is Mittel;
+RULE 5: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Kalt AND personen IS Keine THEN heizung IS Niedrig ,lueftung is Standby;
+RULE 6: IF uhrzeit IS Morgen AND lichtStaerke IS Hell THEN rolladen is Oben;
+RULE 7: IF uhrzeit IS Mittag AND lichtStaerke IS Hell THEN rolladen IS Oben;
+RULE 8: IF uhrzeit IS Mittag AND lichtStaerke IS SehrHell THEN rolladen IS Mitte; 
+RULE 9: IF uhrzeit IS Abend AND lichtStaerke IS Hell THEN rolladen IS Oben;
+RULE 10: IF uhrzeit IS Abend AND lichtStaerke IS SehrDunkel THEN rolladen IS Unten;
+RULE 11: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Angenehm AND personen IS Wenig THEN heizung IS Mittel ,lueftung IS Langsam;
+RULE 12: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Angenehm AND personen IS Mittel THEN heizung IS Mittel ,lueftung IS Mittel;
+RULE 13: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Angenehm AND personen IS Viel THEN heizung IS Aus ,lueftung IS Mittel;
+RULE 14: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Warm AND personen IS Wenig THEN heizung IS Aus ,lueftung IS Mittel;
+RULE 15: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Warm AND personen IS Mittel THEN heizung IS Aus ,lueftung IS Mittel;
+RULE 16: IF temperaturAussen IS Arschkalt AND temperaturInnen IS Warm AND personen IS Viel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 17: IF temperaturAussen IS Kalt AND temperaturInnen IS Kalt AND personen IS Wenig THEN heizung IS Hoch ,lueftung is Langsam;
+RULE 18: IF temperaturAussen IS Kalt AND temperaturInnen IS Kalt AND personen IS Mittel THEN heizung IS Mittel ,lueftung IS Mittel;
+RULE 19: IF temperaturAussen IS Kalt AND temperaturInnen IS Kalt AND personen IS Viel THEN heizung IS Niedrig ,lueftung IS Mittel;
+RULE 20: IF temperaturAussen IS Kalt AND temperaturInnen IS Angenehm AND personen IS Wenig THEN heizung IS Mittel ,lueftung IS Langsam;
+RULE 21: IF temperaturAussen IS Kalt AND temperaturInnen IS Angenehm AND personen IS Mittel THEN heizung IS Mittel ,lueftung IS Mittel;
+RULE 22: IF temperaturAussen IS Kalt AND temperaturInnen IS Angenehm AND personen IS Viel THEN heizung IS Aus ,lueftung is Mittel;
+RULE 23: IF temperaturAussen IS Kalt AND temperaturInnen IS Warm AND personen IS Wenig THEN heizung IS Aus, lueftung IS Mittel;
+RULE 24: IF temperaturAussen IS Kalt AND temperaturInnen IS Warm AND personen IS Mittel THEN heizung IS Aus, lueftung IS Mittel;
+RULE 25: IF temperaturAussen IS Kalt AND temperaturInnen IS Warm AND personen IS Viel THEN heizung IS Aus, lueftung IS Schnell;
+RULE 26: IF temperaturAussen IS Angenehm AND temperaturInnen IS Kalt AND personen IS Wenig THEN heizung IS Niedrig ,lueftung IS Langsam;
+RULE 27: IF temperaturAussen IS Angenehm AND temperaturInnen IS Kalt AND personen IS Mittel THEN heizung IS Niedrig ,lueftung IS Langsam;
+RULE 28: IF temperaturAussen IS Angenehm AND temperaturInnen IS Kalt AND personen IS Viel THEN heizung IS Niedrig ,lueftung IS Mittel;
+RULE 29: IF temperaturAussen IS Angenehm AND temperaturInnen IS Angenehm AND personen IS Wenig THEN heizung IS Niedrig ,lueftung IS Langsam;
+RULE 30: IF temperaturAussen IS Angenehm AND temperaturInnen IS Angenehm AND personen IS Mittel THEN heizung IS Niedrig ,lueftung IS Mittel;
+RULE 31: IF temperaturAussen IS Angenehm AND temperaturInnen IS Angenehm AND personen IS Viel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 32: IF temperaturAussen IS Angenehm AND temperaturInnen IS Warm AND personen IS Wenig THEN heizung is Aus ,lueftung IS Langsam; 
+RULE 33: IF temperaturAussen IS Angenehm AND temperaturInnen IS Warm AND personen IS Mittel THEN heizung Is Aus ,lueftung IS Mittel;
+RULE 34: IF temperaturAussen IS Angenehm AND temperaturInnen IS Warm AND personen IS Viel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 35: IF temperaturAussen IS Angenehm AND temperaturInnen IS Heiss AND personen IS Wenig THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 36: IF temperaturAussen IS Angenehm AND temperaturInnen IS Heiss AND personen IS Mittel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 37: IF temperaturAussen IS Angenehm AND temperaturInnen IS Heiss AND personen IS Viel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 38: IF temperaturAussen IS Warm AND temperaturInnen IS Angenehm AND personen IS Wenig THEN heizung IS Aus ,lueftung IS Langsam;
+RULE 40: IF temperaturAussen IS Warm AND temperaturInnen IS Angenehm AND personen IS Mittel THEN heizung IS Aus ,lueftung IS Langsam;
+RULE 41: IF temperaturAussen IS Warm AND temperaturInnen IS Angenehm AND personen IS Viel THEN heizung IS Aus ,lueftung IS Mittel;
+RULE 42: IF temperaturAussen IS Warm AND temperaturInnen IS Warm AND personen IS Wenig THEN heizung IS Aus ,lueftung IS Mittel;
+RULE 43: IF temperaturAussen IS Warm AND temperaturInnen IS Warm AND personen IS Mittel THEN heizung IS Aus ,lueftung IS Mittel;
+RULE 44: IF temperaturAussen IS Warm AND temperaturInnen IS Warm AND personen IS Viel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 45: IF temperaturAussen IS Warm AND temperaturInnen IS Heiss AND personen IS Wenig THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 46: IF temperaturAussen IS Warm AND temperaturInnen IS Heiss AND personen IS Mittel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 47: IF temperaturAussen IS Warm AND temperaturInnen IS Heiss AND personen IS Viel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 48: IF temperaturAussen IS Heiss AND temperaturInnen IS Angenehm AND personen IS Wenig THEN heizung IS Aus, lueftung IS Langsam;
+RULE 49: IF temperaturAussen IS Heiss AND temperaturInnen IS Angenehm AND personen IS Mittel THEN heizung IS Aus, lueftung IS Mittel;
+RULE 50: IF temperaturAussen IS Heiss AND temperaturInnen IS Angenehm AND personen IS Viel THEN heizung IS Aus, lueftung IS Schnell;
+RULE 51: IF temperaturAussen IS Heiss AND temperaturInnen IS Warm AND personen IS Wenig THEN heizung IS Aus ,lueftung IS Mittel;
+RULE 52: IF temperaturAussen IS Heiss AND temperaturInnen IS Warm AND personen IS Mittel THEN heizung IS Aus, lueftung IS Mittel;
+RULE 53: IF temperaturAussen IS Heiss AND temperaturInnen IS Warm AND personen IS Viel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 54: IF temperaturAussen IS Heiss AND temperaturInnen IS Heiss AND personen IS Wenig THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 55: IF temperaturAussen IS Heiss AND temperaturInnen IS Heiss AND personen IS Mittel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 56: IF temperaturAussen IS Heiss AND temperaturInnen IS Heiss AND personen IS Viel THEN heizung IS Aus ,lueftung IS Schnell;
+RULE 57: IF temperaturInnen IS Kalt AND personen IS Keine THEN heizung IS Niedrig ,lueftung IS Standby;
+RULE 58: IF personen IS Keine THEN heizung IS Aus ,lueftung IS Standby;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
