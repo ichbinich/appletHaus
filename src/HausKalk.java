@@ -3,8 +3,8 @@ import java.util.Random;
 import net.sourceforge.jFuzzyLogic.*;
 
 /** 
- * Diese Klasse ist für die Verbindung mit der FuzzyLogic zuständig. 
- * Sie ließt eine spezielle FCL-Datei ein und kann die Werte der Inputvariablen setzen 
+ * Diese Klasse ist fï¿½r die Verbindung mit der FuzzyLogic zustï¿½ndig. 
+ * Sie lieï¿½t eine spezielle FCL-Datei ein und kann die Werte der Inputvariablen setzen 
  * und die Werte der Outputvariabeln setzen. 
  * 
  * @date 16.11.2011
@@ -13,10 +13,12 @@ import net.sourceforge.jFuzzyLogic.*;
  * 
  * @version 0.1
  * 
- * TODO: Berechnung der Innen und Aussentemperatur, evtl. verfeinerung der Abhängigkeit des Lichts von der Uhrzeit
+ * TODO: Berechnung der Innen und Aussentemperatur, evtl. verfeinerung der Abhï¿½ngigkeit des Lichts von der Uhrzeit
  */
 public class HausKalk 
 {
+	private final double WIRKGRAD_HZG = 0.1;
+	privat final dpuble WIRKGRAD_HZG = 0.1;
 	public static enum IO { uhrzeit, lichtStaerke, temperaturAussen, temperaturInnen, personen, heizung, lueftung, rolladen }
 	String dateiname;
 	FIS fis;
@@ -35,7 +37,7 @@ public class HausKalk
 		fis.evaluate();
 	} 
 	/**
-	 * Lädt eine FCL Datei
+	 * Lï¿½dt eine FCL Datei
 	 */
 	private void loadFis() throws FisNotLoadedException
 	{
@@ -64,7 +66,7 @@ public class HausKalk
 		return fis.getVariable (io.toString()).getValue();
 	}
 	/**
-	 * Berechnung neuer Werte für die Inputvariablen
+	 * Berechnung neuer Werte fï¿½r die Inputvariablen
 	 */
 	@SuppressWarnings("unused")
 	public void calcNewValues(){
@@ -78,35 +80,35 @@ public class HausKalk
 		/* Berechnungn einer neuen Uhrzeit. 							*/
 		this.setValue(IO.uhrzeit, (tmpUhrzeit++) % 24);
 		/* Berechnung der neuen Innentemperatur 						*/
-		if(true) /* TODO: WEGMACHEN */ 				
-		{
-			/* Berechnung der Lichtstaerke 								*/
-			/* If Tag													*/
-			if(this.getValue(IO.uhrzeit) > 6 && this.getValue(IO.uhrzeit) <= 18){
-				
-			}
-			/* If Dämmerung  											*/	
-			if(this.getValue(IO.uhrzeit) < 4 && this.getValue(IO.uhrzeit) > 22){
+
+		/* Berechnung der Lichtstaerke 								*/
+		/* If Tag													*/
+		if(this.getValue(IO.uhrzeit) > 6 && this.getValue(IO.uhrzeit) <= 18){
 			
-			}
-			/* If Nachts 												*/
-			if((this.getValue(IO.uhrzeit) >= 4 && this.getValue(IO.uhrzeit) <= 6) ||
-			(this.getValue(IO.uhrzeit) >= 18 && this.getValue(IO.uhrzeit) <= 22))
-			{
-			}
-			/* Berechnung der Anzahl der Personen 						*/
-			double pers = rand.nextInt(5);
-			if (0 == rand.nextInt (100) % 2)
-				tmpPersonen += pers;
-			tmpPersonen -= pers;
-			if(tmpPersonen < 0)
-				tmpPersonen *= -1;
-			this.setValue(IO.personen, tmpPersonen);
-			/** Berechnung der Innentemperatur 					TODO: Temperaturberechnung		*/
-				// c * Heizung * 1 /  Lüftung * Rolladen_Licht * Aussentemperatur * Innentemperaturvorher * Leute
-			/* Berechnung der Aussentemperatur
-			 * // tmpAussentemperatur + Licht * c + uhrzeit	
-			 */ 			
 		}
+		/* If Dï¿½mmerung  											*/	
+		if(this.getValue(IO.uhrzeit) < 4 && this.getValue(IO.uhrzeit) > 22){
+		
+		}
+		/* If Nachts 												*/
+		if((this.getValue(IO.uhrzeit) >= 4 && this.getValue(IO.uhrzeit) <= 6) ||
+		(this.getValue(IO.uhrzeit) >= 18 && this.getValue(IO.uhrzeit) <= 22))
+		{
+		}
+		/* Berechnung der Anzahl der Personen 						*/
+		double pers = rand.nextInt(5);
+		if (0 == rand.nextInt (100) % 2)
+			tmpPersonen += pers;
+		tmpPersonen -= pers;
+		if(tmpPersonen < 0)
+			tmpPersonen *= -1;
+		this.setValue(IO.personen, tmpPersonen);
+		/** Berechnung der Innentemperatur 					TODO: Temperaturberechnung		*/
+		tmpInnen = tmpInnen + (WIRKGRAD_HZG * tmpHeizung) + (tmpAussen - tmpInnen) * WIRKGRAD_HZG;  
+		/* Berechnung der Aussentemperatur
+		 *  tmpAussentemperatur + Licht * c + uhrzeit	
+		 */ 	
+		 tmpAussen = tmpAussen 
+		 this.setValue(IO.temperaturAussen,tmpAussen);
 	}
 }
