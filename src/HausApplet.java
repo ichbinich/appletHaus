@@ -39,8 +39,9 @@ public class HausApplet extends Applet implements Runnable {
 		{
 			if(myGUI.run)
 			{
-
+				
 				myGUI.update();
+				this.repaint();
 			}
 			try 
 			{

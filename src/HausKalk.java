@@ -78,7 +78,7 @@ public class HausKalk
 		double tmpPersonen = this.getValue(IO.personen);
 		double tmpInnen = this.getValue(IO.temperaturInnen);
 		/* Berechnungn einer neuen Uhrzeit. 							*/
-		this.setValue(IO.uhrzeit, (tmpUhrzeit++) % 24);
+		this.setValue(IO.uhrzeit, (++tmpUhrzeit) % 24);
 		/* Berechnung der neuen Innentemperatur 						*/
 
 		/* Berechnung der Lichtstaerke 								*/
