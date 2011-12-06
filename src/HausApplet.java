@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.io.IOException;
 
 /**
- * Ausführende Klasse
+ * Ausfuehrende Klasse.. not
  * 
  * @author Marius Junak
  *
@@ -48,7 +48,6 @@ public class HausApplet extends Applet implements Runnable {
 				Thread.sleep(500);
 			} catch (InterruptedException e) 
 			{
-				e.printStackTrace();
 			}
 		}
 	}

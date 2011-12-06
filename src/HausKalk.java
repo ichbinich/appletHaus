@@ -17,8 +17,9 @@ import net.sourceforge.jFuzzyLogic.*;
  */
 public class HausKalk 
 {
+	public boolean istNacht;
 	private final double WIRKGRAD_HZG = 0.1;
-	private final double WIRKGRAD_DAEMM = 0.1;
+	private final double WIRKGRAD_DAEMM = 0.3;
 	public static enum IO { uhrzeit, lichtStaerke, temperaturAussen, temperaturInnen, personen, heizung, lueftung, rolladen }
 	String dateiname;
 	FIS fis;
@@ -35,6 +36,7 @@ public class HausKalk
 		this.setValue (IO.uhrzeit, 12);
 		this.setValue (IO.personen, 3);
 		fis.evaluate();
+		istNacht = false;
 	} 
 	/**
 	 * L�dt eine FCL Datei
@@ -84,32 +86,42 @@ public class HausKalk
 		/* Berechnung der Lichtstaerke 								*/
 		/* If Tag													*/
 		if(this.getValue(IO.uhrzeit) > 6 && this.getValue(IO.uhrzeit) <= 18){
-			
+			istNacht = false;
+			this.setValue(IO.lichtStaerke, rand.nextInt(99000)+1000);
 		}
 		/* If D�mmerung  											*/	
 		if(this.getValue(IO.uhrzeit) < 4 && this.getValue(IO.uhrzeit) > 22){
-		
+			this.setValue(IO.lichtStaerke, rand.nextInt(1000)+500);
+			istNacht = false;
 		}
 		/* If Nachts 												*/
 		if((this.getValue(IO.uhrzeit) >= 4 && this.getValue(IO.uhrzeit) <= 6) ||
 		(this.getValue(IO.uhrzeit) >= 18 && this.getValue(IO.uhrzeit) <= 22))
 		{
+			istNacht = true;
+			this.setValue(IO.lichtStaerke, rand.nextInt(500));
 		}
 		/* Berechnung der Anzahl der Personen 						*/
 		double pers = rand.nextInt(5);
 		if (0 == rand.nextInt (100) % 2)
 			tmpPersonen += pers;
-		tmpPersonen -= pers;
+		else
+			tmpPersonen -= pers;
+		
 		if(tmpPersonen < 0)
 			tmpPersonen *= -1;
 		this.setValue(IO.personen, tmpPersonen);
 		/** Berechnung der Innentemperatur 					TODO: Temperaturberechnung		*/
-		tmpInnen = tmpInnen + (WIRKGRAD_HZG * 50) + (tmpAussen - tmpInnen) * WIRKGRAD_DAEMM;  
+		this.setValue(IO.temperaturInnen, tmpInnen + (WIRKGRAD_HZG * 50) + (tmpAussen - tmpInnen) * WIRKGRAD_DAEMM);  
 		/* Berechnung der Aussentemperatur
 		 *  tmpAussentemperatur + Licht * c + uhrzeit	
 		 */ 	
-		 tmpAussen = tmpAussen +1; 
-		 this.setValue(IO.temperaturAussen,tmpAussen);
+		double tempr = rand.nextInt(2);
+		if (0 == rand.nextInt (100) % 2)
+			tmpAussen += tempr;
+		else 
+			tmpAussen -= tempr;
+		this.setValue(IO.temperaturAussen,tmpAussen);
 		 fis.evaluate();
 	}
 }
