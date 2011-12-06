@@ -110,5 +110,6 @@ public class HausKalk
 		 */ 	
 		 tmpAussen = tmpAussen +1; 
 		 this.setValue(IO.temperaturAussen,tmpAussen);
+		 fis.evaluate();
 	}
 }
