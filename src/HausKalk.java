@@ -89,17 +89,17 @@ public class HausKalk
 			istNacht = false;
 			this.setValue(IO.lichtStaerke, rand.nextInt(99000)+1000);
 		}
-		/* If D�mmerung  											*/	
+		/* If Nachts  											*/	
 		if(this.getValue(IO.uhrzeit) < 4 && this.getValue(IO.uhrzeit) > 22){
-			this.setValue(IO.lichtStaerke, rand.nextInt(1000)+500);
-			istNacht = false;
+			this.setValue(IO.lichtStaerke, rand.nextInt(100));
+			istNacht = true;
 		}
-		/* If Nachts 												*/
+		/* If Daemmerung											*/
 		if((this.getValue(IO.uhrzeit) >= 4 && this.getValue(IO.uhrzeit) <= 6) ||
 		(this.getValue(IO.uhrzeit) >= 18 && this.getValue(IO.uhrzeit) <= 22))
 		{
-			istNacht = true;
-			this.setValue(IO.lichtStaerke, rand.nextInt(500));
+			istNacht = false;
+			this.setValue(IO.lichtStaerke, rand.nextInt(29500)+500);
 		}
 		/* Berechnung der Anzahl der Personen 						*/
 		double pers = rand.nextInt(5);
