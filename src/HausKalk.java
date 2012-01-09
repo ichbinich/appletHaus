@@ -3,17 +3,17 @@ import java.util.Random;
 import net.sourceforge.jFuzzyLogic.*;
 
 /** 
- * Diese Klasse ist fï¿½r die Verbindung mit der FuzzyLogic zustï¿½ndig. 
- * Sie lieï¿½t eine spezielle FCL-Datei ein und kann die Werte der Inputvariablen setzen 
+ * Diese Klasse ist fuer die Verbindung mit der FuzzyLogic zustaendig. 
+ * Sie liest eine spezielle FCL-Datei ein und kann die Werte der Inputvariablen setzen 
  * und die Werte der Outputvariabeln setzen. 
  * 
  * @date 16.11.2011
  * 						
  * @author Marius Junak
  * 
- * @version 0.1
+ * @version 0.4
  * 
- * TODO: Berechnung der Innen und Aussentemperatur, evtl. verfeinerung der Abhï¿½ngigkeit des Lichts von der Uhrzeit
+ * 
  */
 public class HausKalk 
 {
@@ -39,7 +39,7 @@ public class HausKalk
 		istNacht = false;
 	} 
 	/**
-	 * Lï¿½dt eine FCL Datei
+	 * Laedt eine FCL Datei
 	 */
 	private void loadFis() throws FisNotLoadedException
 	{
@@ -50,7 +50,9 @@ public class HausKalk
 		}
 	} 
 	/**
-	 * @return gibt ein Chart zurueck 
+	 * 
+	 * @param io
+	 * @return Gibt ein Chart zurueck 
 	 */
 	public BufferedImage getChart (IO io)
 	{
@@ -61,14 +63,14 @@ public class HausKalk
 		fis.setVariable (io.toString(), i);
 	}
 	/**
-	 * @return gibt den Wert der varuabeln zurueck
+	 * @return gibt den Wert der Variabeln zurueck
 	 */
 	public double getValue (IO io)
 	{
 		return fis.getVariable (io.toString()).getValue();
 	}
 	/**
-	 * Berechnung neuer Werte fï¿½r die Inputvariablen
+	 * Berechnet neue Werte für die Eingangsvariablen, abhängig von den Vorherigen.
 	 */
 	@SuppressWarnings("unused")
 	public void calcNewValues(){
@@ -102,7 +104,7 @@ public class HausKalk
 			this.setValue(IO.lichtStaerke, rand.nextInt(29500)+500);
 		}
 		/* Berechnung der Anzahl der Personen 						*/
-		double pers = rand.nextInt(5);
+		double pers = rand.nextInt(3);
 		if (0 == rand.nextInt (100) % 2)
 			tmpPersonen += pers;
 		else
@@ -111,7 +113,7 @@ public class HausKalk
 		if(tmpPersonen < 0)
 			tmpPersonen *= -1;
 		this.setValue(IO.personen, tmpPersonen);
-		/** Berechnung der Innentemperatur 					TODO: Temperaturberechnung		*/
+		/* Berechnung der Innentemperatur 					TODO: Temperaturberechnung		*/
 		this.setValue(IO.temperaturInnen, tmpInnen + (WIRKGRAD_HZG * 50) + (tmpAussen - tmpInnen) * WIRKGRAD_DAEMM);  
 		/* Berechnung der Aussentemperatur
 		 *  tmpAussentemperatur + Licht * c + uhrzeit	

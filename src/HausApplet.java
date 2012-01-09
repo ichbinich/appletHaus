@@ -4,7 +4,8 @@ import java.awt.Graphics;
 import java.io.IOException;
 
 /**
- * Ausfuehrende Klasse.. not
+ * Die Klasse, die das Applet initialisiert und die Oberfläche aufruft.
+ * Startet einen Thread.
  * 
  * @author Marius Junak
  *

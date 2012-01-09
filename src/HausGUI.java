@@ -19,7 +19,6 @@ import org.jfree.chart.plot.MeterPlot;
 import org.jfree.chart.plot.ThermometerPlot;
 import org.jfree.data.general.DefaultValueDataset;
 
-
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -85,7 +84,7 @@ public class HausGUI
 	public boolean run = false;
 	private BufferedImage aktImage;
 	/**
-	 * Create the applet.
+	 * Erstellt das Applet.
 	 * @return 
 	 * @throws FisNotLoadedException 
 	 * @throws IOException 
@@ -116,6 +115,10 @@ public class HausGUI
 		refreshTxtFields();
 		refreshGraphik();
 	}	
+	/**
+	 * Initialisiert das GrafikPanel
+	 * @throws IOException
+	 */
 	private void initGraphikPanel() throws IOException{
 		graphik = new JPanel();
 		graphik.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(0, 0, 0)));
@@ -126,6 +129,9 @@ public class HausGUI
 		this.aktImage = ImageIO.read(new File("../pic/hausTag.png"));
 		graphik.add(new JLabel(new ImageIcon(this.aktImage)), BorderLayout.CENTER);
 	}
+	/**
+	 * Initialisiert das linke Panel
+	 */
 	private void initLeftPanel(){
 		leftPanel.setLayout(null);
 		JButton btnStartStop = new JButton("Start / Stop Simulation");
@@ -201,6 +207,9 @@ public class HausGUI
 		leftPanel.add(lblTemperaturInnen);
 		leftPanel.add(txtUhr);
 	}
+	/**
+	 * Initialisiert das rechte Panel
+	 */
 	private void initRightPanel(){
 		innenLabel = new JLabel(new ImageIcon(kalk.getChart(HausKalk.IO.temperaturInnen)));
 		innenLabel.setBounds(10, 5, 215, 250);
@@ -228,6 +237,9 @@ public class HausGUI
 		rightPanel.add(lueftungLabel);
 		rightPanel.add(heizungLabel);
 	}
+	/**
+	 *  Initialisiert das Menü
+	 */
 	private void initMenu(){
 		mnSimulation = new JMenu("Simulation");
 		mntmStart = new JMenuItem("Start");
@@ -256,7 +268,7 @@ public class HausGUI
 			public void actionPerformed(ActionEvent e) 
 			{
 				JOptionPane.showMessageDialog(tabbedPane, "By: \n" + 	
-	    				"Alexander Zeltner \n Marius Junak \n xxx \n yyy", 
+	    				"Alexander Zeltner \n Marius Junak \n Marcel Grauel \n Martin Mogoluck", 
 	    				"About", JOptionPane.WARNING_MESSAGE);
 			}
 		});
@@ -266,6 +278,9 @@ public class HausGUI
 		menuBar.add(mnHelp);
 		mnHelp.add(mntmAbout);
 	}
+	/**
+	 * Führt die einzelnen Zeichen-Funktionen aus.
+	 */
 	private void refreshGraphik(){
 		/* Setze Hintergrund										*/
 	try {
@@ -281,7 +296,7 @@ public class HausGUI
 		}
 	}
 	/**
-	 * stellt die aktuellen Werte in den JTextfields dar.
+	 * Stellt die aktuellen Werte in den JTextfields dar.
 	 */
 	private void refreshTxtFields(){
 		txtPersonen.setText(Double.toString(kalk.getValue(HausKalk.IO.personen)));
@@ -291,7 +306,7 @@ public class HausGUI
 		txtUhr.setText(Double.toString(kalk.getValue(HausKalk.IO.uhrzeit)));
 	}
 	/**
-	 * Aktualiesiert die Charts
+	 * Aktualisiert die Charts
 	 */
 	private void refreshCharts(){
 		innenLabel.setIcon(new ImageIcon(kalk.getChart(HausKalk.IO.temperaturInnen)));
@@ -303,12 +318,23 @@ public class HausGUI
 		lueftungLabel.setIcon(new ImageIcon(kalk.getChart(HausKalk.IO.lueftung)));
 		heizungLabel.setIcon(new ImageIcon(kalk.getChart(HausKalk.IO.heizung)));
 	}
+	/**
+	 * Ruft Funktionen zum Erneuern des Applets auf.
+	 */
 	public void update() {
 		kalk.calcNewValues();
 		refreshTxtFields();
 		refreshCharts();
 		refreshGraphik();
 		}
+	/**
+	 * Zeichnet ein Bild, das am @param sourcePath liegt, an die uebergebenen Koordinaten.
+	 * 
+	 * @param sourcePath
+	 * @param posX
+	 * @param posY
+	 * @throws IOException
+	 */
 	private void putImageInImage(String sourcePath, int posX, int posY) throws IOException
 	{
 		BufferedImage source;
@@ -322,7 +348,14 @@ public class HausGUI
 			}
 		return;
 	}
-	
+	/**
+	 * Zeichnet ein Bild an die Uebergebenen Koordinaten des Bildes.
+	 * 
+	 * @param source
+	 * @param posX
+	 * @param posY
+	 * @throws IOException
+	 */
 	private void putImageInImage(BufferedImage source, int posX, int posY) throws IOException
 	{
 		for(int y = 0; y < source.getHeight(); y++)
@@ -333,6 +366,15 @@ public class HausGUI
 			}
 		return;
 	}
+	/**
+	 * Zeichnet einen String als Schriftzug an die übergeben Koordinaten. 
+	 * 
+	 * @param text
+	 * @param x
+	 * @param y
+	 * @param color
+	 * @return
+	 */
 	private BufferedImage putStringInImage(String text,int x, int y, Color color)
 	{
 		Graphics test = aktImage.getGraphics();
@@ -347,7 +389,10 @@ public class HausGUI
 		else
 				this.putImageInImage("../pic/hausNacht.png",0 , 0);
 	}
-	
+	/**
+	 * Zeichnet das Rollo.
+	 * @throws IOException
+	 */
 	private void zeichneRollo() throws IOException{
 		double tmpRollo = kalk.getValue(HausKalk.IO.lichtStaerke);
 		// Koordinaten des Fensters
@@ -364,7 +409,10 @@ public class HausGUI
 			this.putImageInImage("../pic/rolloOben.png", tmpX, tmpY);
 			
 	}
-	
+	/**
+	 * Zeichnet die Lüftung 1-3 Symbole, je nach staerke.
+	 * @throws IOException
+	 */
 	private void zeichneLueftung() throws IOException{
 		double tmpLueftung = kalk.getValue(HausKalk.IO.lueftung);
 		//
@@ -376,25 +424,63 @@ public class HausGUI
 			this.putImageInImage("../pic/wind.png", 390, 220);
 		
 	}
-	private void zeichnePersonen(){
+	/**
+	 * Zeichnet Personen ensprechend ihrer Anzahl. (bis maximal 6Personen)
+	 * @throws IOException
+	 */
+	private void zeichnePersonen() throws IOException{
+		double tmpPerson = kalk.getValue(HausKalk.IO.personen);
 		
+		if(tmpPerson >0){
+			this.putImageInImage(("../pic/mensch.png"), 200, 265);
+		}
+		if(tmpPerson >1){
+			this.putImageInImage(("../pic/mensch.png"), 240, 265);
+		}
+		if(tmpPerson >2){
+			this.putImageInImage(("../pic/mensch.png"), 280, 265);
+		}
+		if(tmpPerson >3){
+			this.putImageInImage(("../pic/mensch.png"), 320, 265);
+		}
+		if(tmpPerson >4){
+			this.putImageInImage(("../pic/mensch.png"), 360, 265);
+		}
+		if(tmpPerson >5){
+			this.putImageInImage(("../pic/mensch.png"), 400, 265);
+		}
 	}
+	/**
+	 * Zeichne den Hintergrund, sprich ob es Tag oder Nacht ist.
+	 */
 	private void zeichneLicht(){
 		if(!kalk.istNacht)
 			this.putStringInImage("Lichtstaerke: " + Double.toString(kalk.getValue(HausKalk.IO.lichtStaerke)) + " Lux", 25, 25, Color.BLACK);
 		else
 			this.putStringInImage("Lichtstaerke: " + Double.toString(kalk.getValue(HausKalk.IO.lichtStaerke)) + " Lux", 25, 25, Color.YELLOW);
 	}
+	/**
+	 * Zeichnet das Thermometer, welches die Aussentemperaturanzeigt.
+	 * @throws IOException
+	 */
 	private void zeichneAussenTemp() throws IOException{	
 		final ThermometerPlot plot = new ThermometerPlot(new DefaultValueDataset(kalk.getValue(HausKalk.IO.temperaturAussen)));
 		final JFreeChart chart = new JFreeChart(plot);
 		this.putImageInImage(this.resizeImg(chart.createBufferedImage(100, 300), 50, 150), 540, 160);
 	}
+	/**
+	 * Zeichnet das THermometer, welches die Innentemperaturanzeigt.
+	 * @throws IOException
+	 */
 	private void zeichneInnenTemp() throws IOException{
 		final ThermometerPlot plot = new ThermometerPlot(new DefaultValueDataset(kalk.getValue(HausKalk.IO.temperaturInnen)));
 		final JFreeChart chart = new JFreeChart(plot);
 		this.putImageInImage(this.resizeImg(chart.createBufferedImage(100, 300), 50, 150), 125, 170);
 	}
+	/**
+	 * Zeichnet die Heizung
+	 * @throws IOException
+	 */
 	private void zeichneHeizung() throws IOException{
 		final MeterPlot meterplot = new MeterPlot(new DefaultValueDataset(kalk.getValue(HausKalk.IO.heizung)));
 		final JFreeChart chart = new JFreeChart(meterplot);
@@ -408,7 +494,7 @@ public class HausGUI
 			this.putImageInImage("../pic/heizungAus.png", 220, 360);
 	
 	}
-	/** verkleinert das uebergebene Bild auf X x Y  Pixel					*/
+	/** Verkleinert das uebergebene Bild auf X x Y  Pixel					*/
 	private BufferedImage resizeImg(BufferedImage source, int x, int y){
 		BufferedImage tmp = new BufferedImage( x, y, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics2D = tmp.createGraphics();
